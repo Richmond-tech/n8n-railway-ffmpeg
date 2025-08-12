@@ -1,14 +1,16 @@
 FROM n8nio/n8n:latest
 
-# Install FFmpeg
+# Switch to root to install ffmpeg
 USER root
-RUN apk add --no-cache ffmpeg
 
-# Switch back to n8n user
+# Update package lists and install ffmpeg
+RUN apk update && apk add --no-cache ffmpeg
+
+# Restore n8n user
 USER node
 
-# Expose default port
+# Expose the default port
 EXPOSE 5678
 
-# Start n8n
+# Start n8n when container launches
 CMD ["n8n"]
