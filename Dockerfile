@@ -8,8 +8,7 @@ RUN apt-get update && \
 # Install n8n globally
 RUN npm install -g n8n
 
-# Create n8n user
-RUN useradd -m -d /home/node -s /bin/bash node
+# Switch to the existing 'node' user
 USER node
 WORKDIR /home/node
 
