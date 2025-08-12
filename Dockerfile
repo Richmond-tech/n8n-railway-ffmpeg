@@ -1,16 +1,23 @@
-FROM n8nio/n8n:latest
+FROM node:18-bullseye-slim
 
-# Switch to root to install ffmpeg
-USER root
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y ffmpeg python3 build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
-# Update package lists and install ffmpeg
-RUN apk update && apk add --no-cache ffmpeg
+# Install n8n globally
+RUN npm install -g n8n
 
-# Restore n8n user
+# Create n8n user
+RUN useradd -m -d /home/node -s /bin/bash node
 USER node
+WORKDIR /home/node
 
-# Expose the default port
+# Expose n8n default port
 EXPOSE 5678
 
-# Start n8n when container launches
-CMD ["n8n"]
+# Railway uses PORT env variable, so map it
+ENV N8N_PORT=${PORT:-5678}
+ENV N8N_HOST=0.0.0.0
+
+CMD ["n8n", "start"]
